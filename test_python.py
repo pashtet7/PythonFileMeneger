@@ -1,47 +1,34 @@
 import pytest
-import os
-import shutil
-from console_file_manager import list_folders, list_files, os_info, creator_info
+import math
 
-# Фикстура для создания тестовой директории
-@pytest.fixture(scope="function")
-def setup_test_directory():
-    test_dir = "test_directory"
-    os.mkdir(test_dir)
-    yield  # После выполнения теста удаляем папку
-    shutil.rmtree(test_dir)
+# Тесты для встроенных функций
+def test_filter():
+    data = [1, 2, 3, 4, 5]
+    result = list(filter(lambda x: x % 2 == 0, data))
+    assert result == [2, 4]
 
-@pytest.fixture(scope="function")
-def setup_test_files():
-    filenames = ["test1.txt", "test2.txt"]
-    for filename in filenames:
-        with open(filename, "w") as f:
-            f.write("Test data")
-    yield  # После выполнения теста удаляем файлы
-    for filename in filenames:
-        os.remove(filename)
+def test_map():
+    data = [1, 2, 3]
+    result = list(map(lambda x: x * 2, data))
+    assert result == [2, 4, 6]
 
-# Тест для list_folders
-def test_list_folders(setup_test_directory, capsys):
-    list_folders()  # Выводим список папок
-    captured = capsys.readouterr()  # Перехватываем вывод
-    assert "test_directory" in captured.out  # Проверяем, что папка есть в выводе
+def test_sorted():
+    data = [3, 1, 2]
+    result = sorted(data)
+    assert result == [1, 2, 3]
 
-# Тест для list_files
-def test_list_files(setup_test_files, capsys):
-    list_files()  # Выводим список файлов
-    captured = capsys.readouterr()  # Перехватываем вывод
-    assert "test1.txt" in captured.out
-    assert "test2.txt" in captured.out
+# Тесты для функций из библиотеки math
+def test_math_pi():
+    assert round(math.pi, 5) == 3.14159
 
-# Тест для os_info (проверяем, что вывод не пустой)
-def test_os_info(capsys):
-    os_info()
-    captured = capsys.readouterr()
-    assert "Операционная система" in captured.out
+@pytest.mark.parametrize("num, expected", [(4, 2), (9, 3), (16, 4)])
+def test_math_sqrt(num, expected):
+    assert math.sqrt(num) == expected
 
-# Тест для creator_info
-def test_creator_info(capsys):
-    creator_info()
-    captured = capsys.readouterr()
-    assert "Программа создана пользователем" in captured.out
+@pytest.mark.parametrize("base, exp, expected", [(2, 3, 8), (3, 2, 9), (5, 0, 1)])
+def test_math_pow(base, exp, expected):
+    assert math.pow(base, exp) == expected
+
+@pytest.mark.parametrize("a, b, expected", [(3, 4, 5), (5, 12, 13), (8, 15, 17)])
+def test_math_hypot(a, b, expected):
+    assert math.hypot(a, b) == expected
